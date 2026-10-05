@@ -1,0 +1,32 @@
+{
+    "version": 1,
+    "manifest": {
+        "alias": "crawler-accessrequest",
+        "name": {
+            "en": "Crawler Security Cloud"
+        },
+        "description": {
+            "en": "A dungeon-themed access catalog demo for crawlers with questionable judgment."
+        },
+        "apiScopes": [
+            "sp:search:read",
+            "idn:identity:read",
+            "idn:entitlement:read",
+            "idn:campaign:manage",
+            "idn:campaign-filter:read"
+        ],
+        "contentSecurityPolicies": {},
+        "permissionPolicy": {},
+        "iframeAllow": {},
+        "state": "ENABLED",
+        "slots": [
+            {
+                "slotId": "full-page"
+            }
+        ]
+    },
+    "build": {
+        "outDir": "./dist/crawler-accessrequest/browser",
+        "port": 4200
+    }
+}

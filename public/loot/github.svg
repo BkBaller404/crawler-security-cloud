@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 170" fill="none">
+<defs><linearGradient id="metal" x1="55" y1="24" x2="145" y2="143" gradientUnits="userSpaceOnUse"><stop stop-color="#d2f3ff"/><stop offset=".5" stop-color="#86bddf"/><stop offset="1" stop-color="#376f9d"/></linearGradient></defs>
+<path d="m104 22 57 28-5 66-45 37-44-36-5-68Z" fill="#245779" stroke="#73aed1"/>
+<path d="m94 16 57 29-6 66-48 39-46-39-5-64Z" fill="url(#metal)" stroke="#d2f0ff" stroke-width="2"/>
+<path d="m95 29 43 22-5 52-36 31-34-31-4-51Z" fill="#1b3549" stroke="#86bddd" stroke-width="2"/>
+<path d="m82 66-15 15 15 14m28-29 15 15-15 14m-8-35-12 44" stroke="#b7e5ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="m55 50 36-22" stroke="#ecfbff" stroke-width="2"/>
+<path d="m162 113 2 7 7 2-7 2-2 7-2-7-7-2 7-2Z" fill="#bbecff"/><circle cx="35" cy="34" r="2" fill="#8ab9e1"/>
+</svg>

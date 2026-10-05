@@ -1,0 +1,155 @@
+<div class="dungeon" [class.dungeon--shake]="screen() === 'achievement'">
+  <header class="masthead">
+    <a class="brand" href="#" (click)="$event.preventDefault(); returnToCatalog()" aria-label="Crawler Security Cloud catalog">
+      <span class="brand-mark" aria-hidden="true">C<span>✦</span></span>
+      <span>CRAWLER<span class="brand-sub">SECURITY CLOUD</span></span>
+    </a>
+    <div class="connection"><span class="status-dot" [class.status-dot--live]="connected()"></span>{{ connected() ? 'ISC LINK ESTABLISHED' : 'STANDALONE DEMO' }}</div>
+    <span class="floor-label">FLOOR 01 <span>/</span> PRODUCTION</span>
+  </header>
+
+  <div class="hud" aria-label="Crawler status">
+    <div><span class="hud-label">Crawler</span><strong>{{ crawler() }}</strong></div>
+    <div><span class="hud-label">Class</span><strong>Software Engineer</strong></div>
+    <div><span class="hud-label">Privilege</span><strong class="questionable">Questionable</strong></div>
+    <div><span class="hud-label">AI mood</span><strong class="mood" [class.mood--alert]="mood() !== 'indifferent'"><span aria-hidden="true">{{ mood() === 'indifferent' ? '😐' : mood() === 'concerned' ? '👀' : '😈' }}</span> {{ mood() }}</strong></div>
+    <div class="hud-loot"><span class="hud-label">Loot acquired</span><strong>{{ acquired().length.toString().padStart(2, '0') }}<span class="loot-total"> / 03</span></strong></div>
+  </div>
+
+  <main>
+    <nav class="room-nav" aria-label="Dungeon rooms">
+      <button (click)="chooseAffiliations()" [attr.aria-current]="screen() === 'affiliations' ? 'step' : null">01 / AFFILIATIONS</button>
+      <button (click)="returnToCatalog()" [disabled]="!selectedAffiliations().length" [attr.aria-current]="['catalog', 'success', 'achievement', 'foot'].includes(screen()) ? 'step' : null">02 / LOOT STORE</button>
+      <button (click)="enterDungeon()" [attr.aria-current]="['naughty', 'investigation'].includes(screen()) ? 'step' : null">03 / NAUGHTY LIST</button>
+    </nav>
+    @switch (screen()) {
+      @case ('affiliations') {
+        <section class="affiliation-room" aria-labelledby="affiliation-title">
+          <div class="intro"><div class="intro-copy"><p class="eyebrow">ROOM 01 / CHOOSE YOUR AFFILIATIONS</p><h1 id="affiliation-title" #stateHeading tabindex="-1">WELCOME,<br><span>CRAWLER.</span></h1><p class="intro-line">The system requires you to explain why you exist.</p></div><aside class="ai-note"><div class="ai-note-label">DUNGEON AI</div><p>Choose your affiliations.<br>One identity. Several questionable life choices.</p></aside></div>
+          <fieldset class="affiliation-options"><legend>Choose your affiliations</legend>
+            @for (item of affiliations; track item.id) {
+              <label><input type="checkbox" [checked]="selectedAffiliations().includes(item.id)" (change)="toggleAffiliation(item.id, $any($event.target).checked)"><span>{{ item.name }}</span></label>
+            }
+          </fieldset>
+          <div class="birthright-list" aria-live="polite">
+            @for (pack of birthright(); track pack.id) {
+              <article class="birthright-pack"><p class="eyebrow">🎁 {{ pack.title }}</p><h2>{{ pack.name }}</h2><ul>@for (item of pack.items; track item) { <li>{{ item }}</li> }</ul><p class="pack-commentary">{{ pack.commentary }}</p><span class="simulation-label">SIMULATED BIRTHRIGHT</span></article>
+            } @empty { <p class="empty-message">No affiliation declared. The system remains unimpressed.</p> }
+          </div>
+          <div class="room-actions"><button class="primary-button" [disabled]="!selectedAffiliations().length" (click)="returnToCatalog()">ENTER THE LOOT STORE <svg lucideArrowUpRight aria-hidden="true"></svg></button></div>
+        </section>
+      }
+      @case ('catalog') {
+        <section class="catalog" aria-labelledby="catalog-title">
+          <div class="intro">
+            <div class="intro-copy">
+              <p class="eyebrow"><span></span> THE DUNGEON IS NOW ACCEPTING REQUESTS</p>
+              <h1 id="catalog-title" #stateHeading tabindex="-1">OPTIONAL<br><span>LOOT.</span></h1>
+              <p class="intro-line">Your birthright access wasn't enough? <em>Of course it wasn't.</em></p>
+            </div>
+            <aside class="ai-note">
+              <div class="ai-note-label"><span class="ai-eye" aria-hidden="true">◉</span> DUNGEON AI <span class="live-label">LIVE</span></div>
+              <p>{{ mood() === 'indifferent' ? 'Select your desired loot. I will be judging your choices.' : mood() === 'concerned' ? 'Cloud access. Interesting. The AI is becoming concerned.' : 'Your judgment is questionable. Your entertainment value is not.' }}</p>
+              <span class="ai-signature">ALWAYS WATCHING. MOSTLY DISAPPOINTED.</span>
+            </aside>
+          </div>
+
+          <div class="catalog-heading"><h2>Select your loot</h2><span>04 ITEMS AVAILABLE <span class="heading-divider">/</span> CHOOSE WISELY</span></div>
+          <div class="loot-grid">
+            @for (item of loot; track item.id; let index = $index) {
+              <article [class]="'loot-card rarity--' + item.rarity" [style.--order]="index">
+                <div class="card-top"><span class="rarity-label"><span></span>{{ item.rarity }}</span><span class="item-number">0{{ index + 1 }}</span></div>
+                <div class="relic-stage"><img [src]="'loot/' + item.id + '.svg'" alt="" width="180" height="150"><span class="relic-ring"></span></div>
+                <div class="card-copy"><p class="item-category">{{ item.category }}</p><h3>{{ item.name }}</h3><p class="item-description">{{ item.description }}</p></div>
+                <p class="verdict"><span aria-hidden="true">&gt;</span> {{ item.verdict }}</p>
+                <button class="request-button" (click)="requestAccess(item)" [attr.aria-label]="'Request ' + item.name">{{ acquired().includes(item.id) ? 'ACQUIRED' : 'REQUEST ACCESS' }} <svg lucideArrowUpRight aria-hidden="true"></svg></button>
+                <span class="permission">{{ item.permission }}</span>
+              </article>
+            }
+          </div>
+          <div class="catalog-bottom"><span><span class="small-diamond">◆</span> ALL REQUESTS ARE SUBJECT TO THE AI'S WHIMS.</span><span>MONGO IS APPALLED.</span></div>
+          <div class="room-actions"><button class="primary-button" (click)="enterDungeon()">ENTER THE DUNGEON <svg lucideArrowUpRight aria-hidden="true"></svg></button></div>
+        </section>
+      }
+      @case ('success') {
+        @if (selectedItem(); as item) {
+          <section [class]="'result success rarity--' + item.rarity" aria-labelledby="success-title">
+            <p class="eyebrow">REQUEST RESOLVED / {{ item.rarity }} DROP</p>
+            <div class="result-art"><img [src]="'loot/' + item.id + '.svg'" alt="" width="240" height="210"></div>
+            <h1 id="success-title" #stateHeading tabindex="-1">REQUEST <span>SUBMITTED.</span></h1>
+            <h2>{{ item.name }}</h2>
+            <p class="result-copy">{{ item.id === 'github' ? 'A perfectly reasonable request. Boring.' : item.id === 'database' ? 'Interesting.' : 'The AI is becoming concerned.' }}</p>
+            <div class="receipt"><span>{{ item.permission }}</span><strong>SIMULATED REQUEST</strong></div>
+            <button class="primary-button" (click)="returnToCatalog()"><svg lucideArrowLeft aria-hidden="true"></svg> BACK TO THE LOOT</button>
+          </section>
+        }
+      }
+      @case ('achievement') {
+        <section class="result achievement" aria-labelledby="achievement-title">
+          <p class="achievement-banner"><svg lucideTriangleAlert aria-hidden="true"></svg> NEW ACHIEVEMENT! <svg lucideTriangleAlert aria-hidden="true"></svg></p>
+          <h1 id="achievement-title" #stateHeading tabindex="-1">WHAT COULD<br>POSSIBLY <span>GO WRONG?</span></h1>
+          <p class="requested">You requested <strong>DOMAIN ADMIN.</strong></p>
+          <div class="ai-monologue"><p>You don't need Domain Admin.</p><p>You know you don't need Domain Admin.</p><p>I know you don't need Domain Admin.</p><p><em>And yet here we are.</em></p></div>
+          <div class="reward"><img src="loot/box.svg" alt="A glowing gold loot box" width="160" height="130"><div><span class="eyebrow">YOUR REWARD</span><h2>One Gold Auditor<br>Anxiety Box</h2><span class="reward-caption">COMPLIANCE HAS LEFT THE CHAT.</span></div></div>
+          <button class="primary-button gold-button" (click)="openBox()">OPEN BOX <svg lucideArrowUpRight aria-hidden="true"></svg></button>
+          <button class="text-button" (click)="returnToCatalog()">I've made a terrible mistake. Take me back.</button>
+        </section>
+      }
+      @case ('naughty') {
+        <section class="naughty-room" aria-labelledby="naughty-title">
+          <div class="room-heading"><p class="eyebrow">ROOM 03 / REAL ISC IDENTITIES</p><h1 id="naughty-title" #stateHeading tabindex="-1">THE DUNGEON'S<br><span>NAUGHTY LIST.</span></h1><p class="intro-line">The AI has been watching. The AI is pleased.</p></div>
+          <div class="identity-toolbar"><label>Identity source<select [ngModel]="identitySource()" (ngModelChange)="identitySource.set($event); loadIdentities()" [disabled]="identitiesLoading()"><option value="search">ISC Search</option><option value="list">ISC Identity List</option></select></label><label>Filter this page<input type="search" placeholder="Name or department" [ngModel]="identityFilter()" (ngModelChange)="identityFilter.set($event)"></label><button class="primary-button" (click)="loadIdentities()" [disabled]="identitiesLoading()">{{ identitiesLoading() ? 'LOADING...' : 'REFRESH' }}</button></div>
+          <p class="data-note">Dungeon score = access items × 2 + roles × 5. Local entertainment score, not SailPoint risk. Missing counts are unknown. Up to 25 identities from {{ identitySource() === 'search' ? 'Search' : 'Identity List' }}.</p>
+          @if (identitiesLoading()) { <p class="empty-message" role="status">The AI is consulting the actual tenant...</p> }
+          @else if (identitiesError()) { <p class="api-error" role="alert">{{ identitiesError() }}</p> }
+          @else {
+            <div class="table-scroll"><table><caption class="sr-only">Real ISC identities and locally calculated dungeon scores</caption><thead><tr><th>Identity</th><th>Department</th><th>Access</th><th>Roles</th><th>Dungeon score</th><th>Status</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>
+              @for (identity of visibleIdentities(); track identity.id) { <tr><td><strong>{{ identity.name }}</strong><span class="identity-id">{{ identity.id }}</span></td><td>{{ identity.department }}</td><td>{{ identity.accessCount ?? 'Unknown' }}</td><td>{{ identity.roleCount ?? 'Unknown' }}</td><td>{{ identity.score ?? 'Unknown' }}</td><td><span class="dungeon-mood" [class.naughty]="identity.mood === 'NAUGHTY'">{{ identity.mood === 'NAUGHTY' ? '😈' : identity.mood === 'SUSPICIOUS' ? '😐' : identity.mood === 'BORING' ? '😇' : '?' }} {{ identity.mood }}</span></td><td><button class="request-button" (click)="investigate(identity)" [disabled]="investigationLoading() || campaignLoading()" [attr.aria-label]="'Investigate ' + identity.name">INVESTIGATE <svg lucideArrowUpRight aria-hidden="true"></svg></button></td></tr> }
+              @empty { <tr><td colspan="7" class="empty-message">{{ identities().length ? 'No identities match this filter.' : 'No identities returned. The dungeon is unusually quiet.' }}</td></tr> }
+            </tbody></table></div>
+          }
+        </section>
+      }
+      @case ('investigation') {
+        @if (selectedIdentity(); as identity) {
+          <section class="investigation-room" aria-labelledby="investigation-title">
+            <button class="text-button back-link" (click)="backToNaughtyList()">← BACK TO THE NAUGHTY LIST</button>
+            <p class="eyebrow">IDENTITY INVESTIGATION / REAL ISC DATA</p><h1 id="investigation-title" #stateHeading tabindex="-1">OOOOOH.<br><span>{{ identity.name }}</span></h1>
+            <p class="intro-line">{{ identity.accessCount === null ? 'The AI reserves judgment. Search did not provide an access count.' : identity.name + ' has ' + identity.accessCount + ' access items. I’m sure the auditors will understand.' }}</p>
+            @if (investigationLoading()) { <p role="status" class="empty-message">Loading identity details, roles, and entitlements...</p> }
+            @if (investigationError()) { <p role="alert" class="api-error">{{ investigationError() }}</p> }
+            @if (investigation(); as data) {
+              @for (error of data.errors; track error) { <p class="api-error" role="alert">{{ error }}</p> }
+              <dl class="identity-details"><div><dt>Identity ID</dt><dd>{{ identity.id }}</dd></div><div><dt>Email</dt><dd>{{ data.details?.emailAddress ?? 'Not provided' }}</dd></div><div><dt>ISC status</dt><dd>{{ data.details?.identityStatus ?? 'Not provided' }}</dd></div></dl>
+              <div class="access-columns"><section><h2>Role assignments <span>{{ data.roles?.length ?? 'Unknown' }}</span></h2><ul>@for (role of data.roles ?? []; track $index) { <li>{{ role.name }}</li> } @empty { <li>{{ data.roles === null ? 'Unavailable' : 'No role assignments' }}</li> }</ul></section><section><h2>Entitlements <span>{{ data.entitlements?.length === 50 ? '50+' : data.entitlements?.length ?? 'Unknown' }}</span></h2><p class="data-note">First 50 entitlements, not total access.</p><ul>@for (entitlement of data.entitlements ?? []; track $index) { <li>{{ entitlement.name }}</li> } @empty { <li>{{ data.entitlements === null ? 'Unavailable' : 'No entitlements' }}</li> }</ul></section></div>
+            }
+            <section class="judgment-section" aria-labelledby="judgment-heading"><h2 id="judgment-heading">Send to the auditor</h2>
+              @if (currentCampaign(); as campaign) { <div role="status"><p class="eyebrow">JUDGMENT REQUEST ACCEPTED.</p><p>{{ campaign.name }}</p><p>Campaign: {{ campaign.id ?? 'ID not returned' }} / {{ campaign.status ?? 'Status not returned' }}</p><p class="data-note">Creation is asynchronous. Review generation and activation in ISC Certifications. No campaign was activated here.</p></div> }
+              @else {
+                <p class="data-note">Creates a real SEARCH certification campaign for {{ identity.name }} only. Deadline: 14 days. No automatic activation, notifications, or revocation.</p>
+                <label class="reviewer-label">Identity reviewer<select [ngModel]="reviewerId()" (ngModelChange)="reviewerId.set($event); judgmentConfirmed.set(false)" [disabled]="campaignLoading()"><option value="">Choose a real reviewer</option>@for (reviewer of identities(); track reviewer.id) { <option [value]="reviewer.id">{{ reviewer.name }}</option> }</select></label>
+                <label class="confirmation"><input type="checkbox" [ngModel]="judgmentConfirmed()" (ngModelChange)="judgmentConfirmed.set($event)" [disabled]="campaignLoading()">I confirm creation of a real campaign in this tenant.</label>
+                @if (campaignError()) { <p role="alert" class="api-error">{{ campaignError() }}</p> }
+                <button class="primary-button gold-button" (click)="beginJudgment()" [disabled]="!connected() || !reviewerId() || !judgmentConfirmed() || campaignLoading()">{{ campaignLoading() ? 'SUBMITTING JUDGMENT...' : 'BEGIN JUDGMENT' }} <svg lucideTriangleAlert aria-hidden="true"></svg></button>
+              }
+            </section>
+          </section>
+        }
+      }
+      @case ('foot') {
+        <section class="result foot-result" aria-labelledby="foot-title">
+          <p class="eyebrow">GOLD AUDITOR ANXIETY BOX / OPENED</p>
+          <div class="foot-art" role="img" aria-label="A suspiciously well-maintained foot">🦶<span class="spark spark--one" aria-hidden="true">✦</span><span class="spark spark--two" aria-hidden="true">✦</span><span class="spark spark--three" aria-hidden="true">✧</span></div>
+          <p class="rarity-label foot-rarity">UNIQUE DROP</p>
+          <h1 id="foot-title" #stateHeading tabindex="-1">BOX <span>CONTAINS:</span></h1>
+          <h2>One suspiciously<br>well-maintained foot.</h2>
+          <p class="result-copy"><em>The system is pleased.</em></p>
+          <p class="foot-note">Domain Admin was not granted. Some things are sacred.</p>
+          <button class="primary-button gold-button" (click)="returnToCatalog()"><svg lucideArrowLeft aria-hidden="true"></svg> BACK TO THE LOOT</button>
+        </section>
+      }
+    }
+  </main>
+
+  <footer class="footer"><span>CSC <span class="footer-divider">/</span> DUNGEON ACCESS DIVISION</span><span class="demo-disclaimer">SIMULATED LOOT. NO REAL ACCESS IS PROVISIONED.</span><span>{{ boxOpened() ? 'THE SYSTEM IS PLEASED.' : 'THE SYSTEM IS WATCHING.' }} <span class="status-dot"></span></span></footer>
+</div>
